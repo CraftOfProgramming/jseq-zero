@@ -1,0 +1,11 @@
+target/
+*.iml
+.idea/
+.DS_Store
+*.fastq
+*.fastq.gz
+*counts.tsv
+library_barcodes.tsv
+.nextflow*
+work/
+results/
