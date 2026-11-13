@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.techtune.jseqzero.cli;
+package com.craftofprogramming.jseqzero.cli;
 
-import com.techtune.jseqzero.tools.AmpliconDemuxTool;
-import com.techtune.jseqzero.tools.SyntheticFastqGenerator;
+import com.craftofprogramming.jseqzero.tools.AmpliconDemuxTool;
+import com.craftofprogramming.jseqzero.tools.SyntheticFastqGenerator;
 
 import java.util.Arrays;
 

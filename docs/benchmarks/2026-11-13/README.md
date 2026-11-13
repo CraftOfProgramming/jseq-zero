@@ -2,6 +2,8 @@
 
 This benchmark compares the repository's readable Python reference with its GraalVM 25 AOT executable. See [results.csv](results.csv) for every measured run and [results.json](results.json) for complete provenance, dataset hashes, source hashes, counts and hardware.
 
+The measured binary and source hashes predate the package rename from `com.techtune.jseqzero` to `com.craftofprogramming.jseqzero`. The archived results retain their original source paths and hashes; the namespace change did not rerun these benchmarks or regenerate the native executable.
+
 ## Hardware and software
 
 | Property | Observed value |

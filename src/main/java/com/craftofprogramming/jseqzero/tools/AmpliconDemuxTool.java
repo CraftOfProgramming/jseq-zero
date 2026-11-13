@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.techtune.jseqzero.tools;
+package com.craftofprogramming.jseqzero.tools;
 
-import com.techtune.jseqzero.core.BitapFlankFinder;
-import com.techtune.jseqzero.core.Dna2Bit;
-import com.techtune.jseqzero.core.FastqRecordReader;
-import com.techtune.jseqzero.core.PigeonholeBarcodeIndex;
+import com.craftofprogramming.jseqzero.core.BitapFlankFinder;
+import com.craftofprogramming.jseqzero.core.Dna2Bit;
+import com.craftofprogramming.jseqzero.core.FastqRecordReader;
+import com.craftofprogramming.jseqzero.core.PigeonholeBarcodeIndex;
 import org.agrona.collections.Long2LongCounterMap;
 import org.agrona.collections.LongHashSet;
 

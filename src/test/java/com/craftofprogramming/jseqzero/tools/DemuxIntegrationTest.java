@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.techtune.jseqzero.tools;
+package com.craftofprogramming.jseqzero.tools;
 
-import com.techtune.jseqzero.cli.JSeqZeroMain;
-import com.techtune.jseqzero.core.Dna2Bit;
-import com.techtune.jseqzero.core.FastqRecordReader;
+import com.craftofprogramming.jseqzero.cli.JSeqZeroMain;
+import com.craftofprogramming.jseqzero.core.Dna2Bit;
+import com.craftofprogramming.jseqzero.core.FastqRecordReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import java.io.*;

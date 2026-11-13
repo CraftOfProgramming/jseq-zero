@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.techtune.jseqzero</groupId>
+    <groupId>com.craftofprogramming.jseqzero</groupId>
     <artifactId>jseq-zero</artifactId>
     <version>1.0.0</version>
     <name>jseq-zero</name>
@@ -23,7 +23,7 @@
         <maven.compiler.release>25</maven.compiler.release>
         <agrona.version>1.22.0</agrona.version>
         <junit.version>5.10.3</junit.version>
-        <main.class>com.techtune.jseqzero.cli.JSeqZeroMain</main.class>
+        <main.class>com.craftofprogramming.jseqzero.cli.JSeqZeroMain</main.class>
     </properties>
 
     <dependencies>
@@ -41,6 +41,19 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>LICENSE</include>
+                    <include>THIRD-PARTY-NOTICES.md</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>

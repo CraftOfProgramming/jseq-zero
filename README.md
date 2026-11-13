@@ -15,8 +15,10 @@ Allocation-conscious Java 25 primitives and CLI tools for paired-end sequencing 
 | Throughput at median time | 63,617 pairs/s | 1,941,598 pairs/s |
 | Median peak process memory (RSS) | 287.5 MiB | 42.0 MiB |
 | Unique UMIs counted | 991,809 | 993,032 |
-| Reads with no anchor found | 161,789 | 0 |
-| Reads with unmatched barcode | 25,627 | 25,627 |
+| Read pairs with no anchor found | 161,789 | 0 |
+| Read pairs with unmatched barcode | 25,627 | 25,627 |
+
+The 161,789 additional matched read pairs produced 160,566 additional PCR-duplicate counts and 1,223 additional unique UMI counts, consistent with the dataset’s average 5× sampling depth.
 
 Native Java used **85.4% less peak RSS** in this measurement. These are medians of three fresh processes on **Intel Core i7-12700, 30.8 GiB RAM, RHEL 9.6**, with each benchmark process pinned to one CPU. Runtime versions: **CPython 3.11.16** and **Oracle GraalVM 25.0.3+9.1**. Wall time includes startup, imports and I/O; peak RSS is total process memory, not Java heap. The native heap limit was 512 MiB. Filesystem caches were not flushed.
 
@@ -43,6 +45,19 @@ cd jseq-zero-native
 ```
 
 The generator uses a fixed seed and samples candidate molecules with replacement; one million candidates does not guarantee one million observed unique molecules. Native binaries are platform-specific: build locally for macOS or another target platform.
+
+## Run the cross-platform JAR
+
+Download [jseq-zero.jar](https://github.com/CraftOfProgramming/jseq-zero/releases/download/v1.0.0-preview.1/jseq-zero.jar) and its [SHA-256 file](https://github.com/CraftOfProgramming/jseq-zero/releases/download/v1.0.0-preview.1/jseq-zero.jar.sha256). The executable JAR includes its dependencies and requires **Java 25**. Use a Java installation for your platform, including Apple Silicon macOS, Linux or Windows.
+
+```bash
+# macOS checksum verification; on Linux, use sha256sum -c instead.
+shasum -a 256 -c jseq-zero.jar.sha256
+java -jar jseq-zero.jar --help
+java -Xmx512m -jar jseq-zero.jar amplicon-demux library_barcodes.tsv R1.fastq R2.fastq jseq_counts.tsv
+```
+
+The JAR uses the `com.craftofprogramming.jseqzero` namespace; its exact source commit, build environment and checksum are recorded in [jseq-zero-jar-build-info.json](https://github.com/CraftOfProgramming/jseq-zero/releases/download/v1.0.0-preview.1/jseq-zero-jar-build-info.json). It is a supplemental JVM artifact built after the original preview tag. The published performance measurements apply to the unchanged Linux native executable, not this JAR; no new benchmark or native build was run for this addition.
 
 ## Build from source
 

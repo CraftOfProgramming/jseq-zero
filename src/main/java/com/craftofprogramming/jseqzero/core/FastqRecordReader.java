@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.techtune.jseqzero.core;
+package com.craftofprogramming.jseqzero.core;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
