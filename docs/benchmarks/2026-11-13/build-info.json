@@ -1,0 +1,62 @@
+{
+  "graalvm_version": "native-image 25.0.3 2026-04-21\nGraalVM Runtime Environment Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01)\nSubstrate VM Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS, serial gc, compressed references)\njava version \"25.0.3\" 2026-04-21 LTS\nJava(TM) SE Runtime Environment Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01)\nJava HotSpot(TM) 64-Bit Server VM Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01, mixed mode, sharing)",
+  "binary_sha256": "8d2158e7905301cfa02e75bab955dc717e15172766c9b4256d1a474971db20c1",
+  "binary_bytes": 17189944,
+  "binary_format": "ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=a2f3edc4971c9aba39d9650487aefe17a48ebc92, for GNU/Linux 3.2.0, stripped",
+  "glibc_minimum": "2.34",
+  "runtime_libraries": [
+    "libc.so.6",
+    "libz.so.1",
+    "ld-linux-x86-64.so.2"
+  ],
+  "native_image_flags": [
+    "--no-fallback",
+    "-O3",
+    "-march=compatibility",
+    "-J-Xmx8g",
+    "--parallelism=4"
+  ],
+  "compiler": "gcc (GCC) 11.5.0 20240719 (Red Hat 11.5.0-5)",
+  "java_tests": 19,
+  "native_integration": {
+    "passed": 9,
+    "checks": [
+      "Native help works without Java or commands on PATH",
+      "Unknown subcommand exits nonzero",
+      "Missing demultiplexer arguments exit nonzero",
+      "Native generator creates 1,000 paired reads",
+      "Plain and gzip native count maps match",
+      "Readable Python and native counts agree on a known exact-match fixture",
+      "Truncated FASTQ is rejected",
+      "Unequal pair counts are rejected",
+      "Invalid generator sizes are rejected"
+    ]
+  },
+  "coverage": {
+    "INSTRUCTION": {
+      "covered": 2030,
+      "missed": 127
+    },
+    "BRANCH": {
+      "covered": 188,
+      "missed": 41
+    },
+    "LINE": {
+      "covered": 391,
+      "missed": 34
+    },
+    "COMPLEXITY": {
+      "covered": 112,
+      "missed": 37
+    },
+    "METHOD": {
+      "covered": 32,
+      "missed": 1
+    },
+    "CLASS": {
+      "covered": 7,
+      "missed": 0
+    }
+  },
+  "tooling_files_unchanged": true
+}

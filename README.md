@@ -1,79 +1,99 @@
 # jseq-zero
 
-Zero-allocation, cache-friendly JVM primitives and CLI tools for high-throughput Next-Generation Sequencing (NGS) analysis.
+Allocation-conscious Java 25 primitives and CLI tools for paired-end sequencing barcode demultiplexing and UMI deduplication. Available as a standalone **GraalVM 25 native executable**: no Java installation or JIT warmup is required to run the Linux binary.
 
-`jseq-zero` applies mechanical-sympathy techniques—2-bit register encodings, `POPCNT` Hamming distance, branchless Wu-Manber/Bitap Levenshtein automata, Compressed Sparse Row (CSR) seed-and-extend indices, and open-addressed primitive hash tables (`Agrona`)—to reduce allocation pressure in sequencing workloads. Setup, dataset generation, collection growth, and output still allocate; zero allocation has not been established by profiling.
+## Measured performance
 
----
+**5 million read pairs in 2.575 seconds — 30.5× faster than our readable Python reference on this synthetic workload.**
 
-## Included Subcommands
+![Readable Python versus GraalVM 25 native Java: elapsed time and peak process memory](docs/benchmarks/2026-11-13/benchmark-comparison.png)
 
-* **`amplicon-demux`** — Indel-tolerant paired-end `FASTQ` barcode demultiplexer and 10x single-cell UMI deduplicator. Drop-in compatible with **scAAVengr Stage 5** (`scCAG-eGFP-Barcode-bghPolyA`), CRISPR pooled screens, and combinatorial capsid libraries up to **1,048,575 variants**.
-* **`generate-benchmark`** — Synthetic paired-end `FASTQ` dataset generator injecting realistic PCR duplication depth, variable 5' frame-shifts, upstream anchor deletions, and barcode point mutations.
+| Measurement | Readable Python reference | jseq-zero · GraalVM 25 native |
+| :--- | ---: | ---: |
+| Median end-to-end time | 78.595 s | 2.575 s |
+| Observed time range | 78.240–79.870 s | 2.575–2.589 s |
+| Throughput at median time | 63,617 pairs/s | 1,941,598 pairs/s |
+| Median peak process memory (RSS) | 287.5 MiB | 42.0 MiB |
+| Unique UMIs counted | 991,809 | 993,032 |
+| Reads with no anchor found | 161,789 | 0 |
+| Reads with unmatched barcode | 25,627 | 25,627 |
 
----
+Native Java used **85.4% less peak RSS** in this measurement. These are medians of three fresh processes on **Intel Core i7-12700, 30.8 GiB RAM, RHEL 9.6**, with each benchmark process pinned to one CPU. Runtime versions: **CPython 3.11.16** and **Oracle GraalVM 25.0.3+9.1**. Wall time includes startup, imports and I/O; peak RSS is total process memory, not Java heap. The native heap limit was 512 MiB. Filesystem caches were not flushed.
 
-## Case Study Benchmark: Single-Cell AAV Barcoded Amplicon Screen (`amplicon-demux`)
+Both implementations were authored for this project. The [Python reference](scripts/baseline_demux.py) uses ordinary strings, sets and counters, dictionary lookup for exact barcodes, and a straightforward Hamming-distance scan for approximate matches. It has no allocation tracing or artificial delays. This comparison measures these implementations on a synthetic 50-variant library; it does not establish a general Java-versus-Python speedup or benchmark software from a biotech laboratory.
 
-Measured locally on macOS 14.4 (Apple Silicon), OpenJDK 25.0.1, with a 512 MB maximum heap on 2026-11-13. These are single-run results, not cross-machine guarantees.
+**Matching behavior differs:** native Java also supports an indel-tolerant anchor fallback. It counted 1,223 additional UMIs across 1,221 cell/variant rows; Python had no extra counts. Both accept barcode matches with up to two substitutions. Output totals reconcile with the TSV files and remain identical across repeats for each implementation. This is not a ground-truth accuracy or clinical validation study.
 
-| Measurement | Result |
-| :--- | :--- |
-| Dataset | 5,000,000 read pairs; 1,000,000 candidate molecules; mean PCR depth 5; 50 variants |
-| Demultiplexer-reported elapsed time | 2.32 seconds |
-| Whole Java process wall time | 2.459 seconds |
-| Throughput | 2,154,031 read pairs/second |
-| Heap use reported at completion | 44 MB (not peak RSS or a measured allocation rate) |
-| Unique UMIs counted | 993,032 |
-| PCR duplicates | 3,981,341 |
-| Anchor not found | 0 |
-| Unmatched barcode | 25,627 |
+[Full methods and hardware](docs/benchmarks/2026-11-13/README.md) · [Raw CSV](docs/benchmarks/2026-11-13/results.csv) · [Raw JSON](docs/benchmarks/2026-11-13/results.json) · [Chart PDF](docs/benchmarks/2026-11-13/benchmark-comparison.pdf) · [Editable SVG](docs/benchmarks/2026-11-13/benchmark-comparison.svg)
 
-The generator samples candidate molecules with replacement, so the configured molecule count is not the number guaranteed to appear in the reads. The output TSV's UMI sum was checked against telemetry. These checks do not establish complete recovery of noisy reads or biological validation. Python speedups, 50,000-variant timing, and zero allocation have not been measured in this run.
+## Run the native binary
 
----
-
-## Core Architecture (`com.techtune.jseqzero.core`)
-
-1. **`Dna2Bit`:** Branchless ASCII-to-2-bit DNA encoding `(b >> 1) & 3L` and 4-instruction `POPCNT` Hamming distance (`(xor | (xor >>> 1)) & 0x5555555555555555L`).
-2. **`BitapFlankFinder`:** Cascades a 6-cycle 2-bit rolling window into a branchless Wu-Manber / Bitap Levenshtein (`k <= 2`) automaton, resolving exact downstream barcode offsets even when PCR amplification introduces indels inside the constant primer/flank.
-3. **`PigeonholeBarcodeIndex`:** Flat CSR 3-slice seed-and-extend index (~2.7 MB L3-resident footprint) partitioning 50-bit barcodes into `18-bit + 16-bit + 16-bit` slices so any read with `<= 2` mismatches probes an average of ~3.4 candidates instead of scanning `100,000+` variants.
-4. **`FastqRecordReader` & Primitive UMI Deduplication:** Streams uncompressed or `.gz` `FASTQ` records without allocating `String` objects, packing `[32-bit Cell Barcode | 20-bit Variant ID]` and 64-bit molecule signatures into flat `Agrona` primitive tables (`LongHashSet`, `Long2LongCounterMap`).
-
----
-
-## Quick Start
-
-Requires **JDK 25+** and **Maven 3.9+**:
+Download the **Linux x86-64 native preview** and its SHA-256 file from the [release page](https://github.com/CraftOfProgramming/jseq-zero/releases/tag/v1.0.0-preview.1). It requires **glibc 2.34+ and libz.so.1**, and targets the GraalVM compatibility CPU baseline. The supplied executable is the exact binary used for the published benchmark.
 
 ```bash
-# 1. Build zero-dependency executable JAR and run unit tests
-mvn clean package
+sha256sum -c jseq-zero-1.0.0-linux-x86_64.tar.gz.sha256
+mkdir jseq-zero-native
+tar -xzf jseq-zero-1.0.0-linux-x86_64.tar.gz -C jseq-zero-native
+cd jseq-zero-native
+./jseq-zero --help
 
-# 2. Generate 5,000,000 synthetic paired-end reads (1M unique molecules, 5x PCR depth, 50 variants)
-java -jar target/jseq-zero.jar generate-benchmark 1000000 5 50
-
-# 3. Run jseq-zero amplicon-demux
-java -Xmx512m -jar target/jseq-zero.jar amplicon-demux library_barcodes.tsv R1.fastq R2.fastq jseq_counts.tsv
-
-# 4. (Optional) Compare against baseline Python/Pandas implementation
-python3 scripts/baseline_demux.py library_barcodes.tsv R1.fastq R2.fastq python_counts.tsv
-
-# 5. (Optional) Test combinatorial library scaling (50,000 barcoded variants!)
-java -jar target/jseq-zero.jar generate-benchmark 1000000 5 50000
-java -Xmx512m -jar target/jseq-zero.jar amplicon-demux library_barcodes.tsv R1.fastq R2.fastq jseq_50k_counts.tsv
+# Synthetic input: 1M candidate molecules, 5x PCR depth, 50 variants.
+./jseq-zero -Xmx512m generate-benchmark 1000000 5 50
+./jseq-zero -Xmx512m amplicon-demux library_barcodes.tsv R1.fastq R2.fastq jseq_counts.tsv
 ```
 
-### Optional GraalVM Native Binary & Nextflow Integration
+The generator uses a fixed seed and samples candidate molecules with replacement; one million candidates does not guarantee one million observed unique molecules. Native binaries are platform-specific: build locally for macOS or another target platform.
+
+## Build from source
+
+A single Maven module produces `target/jseq-zero.jar`. Use **JDK 25**; the published native build used **Oracle GraalVM 25.0.3** and Maven **3.6.3**. The project also builds with Maven 3.9.
 
 ```bash
-# Compile standalone native executable (when GraalVM JDK 25 is active)
-mvn -Pnative package
+mvn clean verify
+java -jar target/jseq-zero.jar --help
 
-# Run Nextflow DSL2 pipeline (with optional Scanpy .h5ad matrix injection)
-nextflow run workflow/main.nf --reads 'data/*_R{1,2}.fastq.gz' --library_tsv data/library_barcodes.tsv
+# With GraalVM 25 active, compile the standalone executable.
+native-image -J-Xmx8g --parallelism=4 --no-fallback -O3 -march=compatibility \
+  -jar target/jseq-zero.jar target/jseq-zero
+./target/jseq-zero --help
+```
+
+The direct Native Image command above produced the measured binary. The repository also contains an optional Maven `native` profile. All published performance figures use AOT native execution.
+
+## Correctness and coverage
+
+The Java suite has **19 passing tests**, including DNA encoding and matching boundaries, ambiguous barcode matches, plain/gzip FASTQ input, buffer limits, truncated input, unequal paired-read counts, UMI deduplication and generator validation. JaCoCo reports **92.0% line coverage (391/425)** and **82.1% branch coverage (188/229)**. Six Python reference tests and nine native integration checks also pass.
+
+```bash
+mvn verify
+# Coverage report: target/site/jacoco/index.html
+python3 -m unittest discover -s scripts -p 'test_*demux.py'
+python3 scripts/verify_native.py /absolute/path/to/jseq-zero --report native-checks.json
+```
+
+Coverage describes exercised code, not biological validation. This initial release still needs validation against representative real datasets and established demultiplexing tools.
+
+## Implementation
+
+- **`Dna2Bit`** packs DNA bases into two-bit words and computes Hamming distance with bit operations and population count.
+- **`BitapFlankFinder`** finds the constant anchor using a fast matching path and a bounded edit-distance fallback.
+- **`PigeonholeBarcodeIndex`** uses three seed slices in a compact index to narrow approximate barcode candidates.
+- **`FastqRecordReader`** streams plain or gzip FASTQ into reusable buffers. Primitive Agrona collections store molecule signatures and cell/variant counts.
+
+The hot path avoids per-record `String` construction. Setup, collection growth, generation and output still allocate; zero allocation has not been established by profiling. The included [Nextflow workflow](workflow/main.nf) is an integration example and was not part of the native benchmark validation.
+
+## Reproduce the benchmark and chart
+
+Use the release binary and its included `build-info.json` on Linux, with Python 3.11 or later. Follow the [reproduction commands](docs/benchmarks/2026-11-13/README.md). The benchmark and reference require only the Python standard library; chart rendering has separate pinned dependencies.
+
+## Optional optimized Python reference
+
+[`scripts/optimized_demux.py`](scripts/optimized_demux.py) is a separate optimization example using binary reads, indexed approximate lookup, cached matches and compact integer keys. It is included for inspection and experimentation. The published benchmark and chart use the readable `baseline_demux.py`; the 30.5× speedup does not describe this optional optimized implementation.
+
+```bash
+python3 scripts/optimized_demux.py library_barcodes.tsv R1.fastq R2.fastq optimized_counts.tsv
 ```
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE).
+Application source is licensed under [Apache-2.0](LICENSE), with notices in each source file. The native distribution also contains Agrona and Oracle GraalVM runtime components under their respective terms; their original license notices accompany the download. See [third-party notices](THIRD-PARTY-NOTICES.md).

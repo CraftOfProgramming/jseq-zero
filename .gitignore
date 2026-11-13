@@ -9,3 +9,15 @@ library_barcodes.tsv
 .nextflow*
 work/
 results/
+
+# Local Python tooling
+.venv-benchmark/
+__pycache__/
+*.py[cod]
+benchmark-results/
+
+artifacts/
+
+benchmark-data/
+
+native-checks.json

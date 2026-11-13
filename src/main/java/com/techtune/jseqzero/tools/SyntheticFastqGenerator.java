@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 TechTune Media Group
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.techtune.jseqzero.tools;
 
 import java.io.BufferedOutputStream;
@@ -6,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.SplittableRandom;
 
@@ -26,13 +43,22 @@ public final class SyntheticFastqGenerator {
         final int numUniqueMolecules = args.length > 0 ? Integer.parseInt(args[0]) : 1_000_000;
         final int pcrFactor = args.length > 1 ? Integer.parseInt(args[1]) : 5;
         final int numVariants = args.length > 2 ? Integer.parseInt(args[2]) : 50;
-        final int totalReadPairs = numUniqueMolecules * pcrFactor;
+        generate(Path.of("."), numUniqueMolecules, pcrFactor, numVariants);
+    }
+
+    /** Generates deterministic synthetic inputs in the supplied directory. */
+    public static void generate(final Path outputDirectory, final int numUniqueMolecules,
+                                final int pcrFactor, final int numVariants) throws IOException {
+        if (numUniqueMolecules < 1 || pcrFactor < 1 || numVariants < 1 || numVariants > 0xFFFFF) {
+            throw new IllegalArgumentException("Molecules and PCR depth must be positive; variants must be in [1..1048575]");
+        }
+        final int totalReadPairs = Math.multiplyExact(numUniqueMolecules, pcrFactor);
         final int numCells = 5_000;
 
         final SplittableRandom rng = new SplittableRandom(42L);
 
         final byte[][] barcodeLibrary = new byte[numVariants][25];
-        try (PrintWriter libOut = new PrintWriter("library_barcodes.tsv")) {
+        try (PrintWriter libOut = new PrintWriter(outputDirectory.resolve("library_barcodes.tsv").toFile())) {
             libOut.println("variant_name\tbarcode_25bp");
             for (int v = 0; v < numVariants; v++) {
                 for (int i = 0; i < 25; i++) {
@@ -65,8 +91,8 @@ public final class SyntheticFastqGenerator {
                 "Generating %,d paired-end reads (%,d unique molecules, %dx PCR depth, %,d library variants)...%n",
                 totalReadPairs, numUniqueMolecules, pcrFactor, numVariants);
 
-        try (OutputStream r1Out = new BufferedOutputStream(new FileOutputStream("R1.fastq"), 1024 * 1024);
-             OutputStream r2Out = new BufferedOutputStream(new FileOutputStream("R2.fastq"), 1024 * 1024)) {
+        try (OutputStream r1Out = new BufferedOutputStream(new FileOutputStream(outputDirectory.resolve("R1.fastq").toFile()), 1024 * 1024);
+             OutputStream r2Out = new BufferedOutputStream(new FileOutputStream(outputDirectory.resolve("R2.fastq").toFile()), 1024 * 1024)) {
 
             final byte[] r1Qual = new byte[28];
             final byte[] r2Qual = new byte[100];

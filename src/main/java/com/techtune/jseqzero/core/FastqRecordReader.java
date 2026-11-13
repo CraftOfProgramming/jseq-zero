@@ -1,7 +1,24 @@
+/*
+ * Copyright 2026 TechTune Media Group
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.techtune.jseqzero.core;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -39,22 +56,24 @@ public final class FastqRecordReader implements AutoCloseable {
         }
         final int seqLen = readLineInto(targetBuffer); // Line 2: Sequence
         if (seqLen < 0) {
-            return -1;
+            throw new EOFException("FASTQ record is missing its sequence line");
         }
         if (!skipLine()) {
-            return -1; // Line 3: +
+            throw new EOFException("FASTQ record is missing its separator line");
         }
         if (!skipLine()) {
-            return -1; // Line 4: Phred Quality
+            throw new EOFException("FASTQ record is missing its quality line");
         }
         return seqLen;
     }
 
     private boolean skipLine() throws IOException {
+        boolean sawAnyByte = false;
         while (true) {
             if (pos >= limit && !fill()) {
-                return false;
+                return sawAnyByte;
             }
+            sawAnyByte = true;
             if (ioBuf[pos++] == '\n') {
                 return true;
             }
@@ -71,7 +90,10 @@ public final class FastqRecordReader implements AutoCloseable {
             if (b == '\n') {
                 return outIdx;
             }
-            if (b != '\r' && outIdx < target.length) {
+            if (b != '\r') {
+                if (outIdx == target.length) {
+                    throw new IOException("FASTQ sequence exceeds buffer capacity of " + target.length + " bases");
+                }
                 target[outIdx++] = b;
             }
         }

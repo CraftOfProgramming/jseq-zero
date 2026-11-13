@@ -1,0 +1,286 @@
+{
+  "schema_version": 2,
+  "measured_at_utc": "2026-11-13T19:43:09.492736+00:00",
+  "environment": {
+    "os": "Red Hat Enterprise Linux 9.6 (Plow)",
+    "kernel": "5.14.0-570.12.1.el9_6.x86_64",
+    "architecture": "x86_64",
+    "cpu_model": "12th Gen Intel(R) Core(TM) i7-12700",
+    "visible_cpus": 12,
+    "available_cpu_affinity": [
+      0,
+      1,
+      10,
+      11
+    ],
+    "benchmark_cpu_affinity": [
+      0
+    ],
+    "memory_gib": 30.786888122558594,
+    "virtualization_detected": "none",
+    "topology": {
+      "Socket(s)": "1",
+      "Core(s) per socket": "12",
+      "Thread(s) per core": "1",
+      "CPU max MHz": "4900.0000",
+      "CPU min MHz": "800.0000",
+      "L1d cache": "512 KiB (12 instances)",
+      "L1i cache": "512 KiB (12 instances)",
+      "L2 cache": "12 MiB (9 instances)",
+      "L3 cache": "25 MiB (1 instance)"
+    },
+    "python": "3.11.16",
+    "python_implementation": "CPython",
+    "load_average_before": [
+      0.08,
+      0.55,
+      0.59
+    ],
+    "load_average_after": [
+      1.01,
+      0.82,
+      0.7
+    ]
+  },
+  "build": {
+    "graalvm_version": "native-image 25.0.3 2026-04-21\nGraalVM Runtime Environment Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01)\nSubstrate VM Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS, serial gc, compressed references)\njava version \"25.0.3\" 2026-04-21 LTS\nJava(TM) SE Runtime Environment Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01)\nJava HotSpot(TM) 64-Bit Server VM Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01, mixed mode, sharing)",
+    "binary_sha256": "8d2158e7905301cfa02e75bab955dc717e15172766c9b4256d1a474971db20c1",
+    "binary_bytes": 17189944,
+    "binary_format": "ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=a2f3edc4971c9aba39d9650487aefe17a48ebc92, for GNU/Linux 3.2.0, stripped",
+    "glibc_minimum": "2.34",
+    "runtime_libraries": [
+      "libc.so.6",
+      "libz.so.1",
+      "ld-linux-x86-64.so.2"
+    ],
+    "native_image_flags": [
+      "--no-fallback",
+      "-O3",
+      "-march=compatibility",
+      "-J-Xmx8g",
+      "--parallelism=4"
+    ],
+    "compiler": "gcc (GCC) 11.5.0 20240719 (Red Hat 11.5.0-5)",
+    "java_tests": 19,
+    "native_integration": {
+      "passed": 9,
+      "checks": [
+        "Native help works without Java or commands on PATH",
+        "Unknown subcommand exits nonzero",
+        "Missing demultiplexer arguments exit nonzero",
+        "Native generator creates 1,000 paired reads",
+        "Plain and gzip native count maps match",
+        "Readable Python and native counts agree on a known exact-match fixture",
+        "Truncated FASTQ is rejected",
+        "Unequal pair counts are rejected",
+        "Invalid generator sizes are rejected"
+      ]
+    },
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 2030,
+        "missed": 127
+      },
+      "BRANCH": {
+        "covered": 188,
+        "missed": 41
+      },
+      "LINE": {
+        "covered": 391,
+        "missed": 34
+      },
+      "COMPLEXITY": {
+        "covered": 112,
+        "missed": 37
+      },
+      "METHOD": {
+        "covered": 32,
+        "missed": 1
+      },
+      "CLASS": {
+        "covered": 7,
+        "missed": 0
+      }
+    },
+    "tooling_files_unchanged": true
+  },
+  "dataset": {
+    "read_pairs": 5000000,
+    "library_variants": 50,
+    "files": {
+      "library_barcodes.tsv": {
+        "sha256": "131f547f31d1ba35dc5d328bd8bc27db153450cb93006965dfe09c8c7ba78392",
+        "bytes": 2226
+      },
+      "R1.fastq": {
+        "sha256": "757b5e96c193cddf1dc65c1183034c8f2e7564f78372f6fb12aeb06dd56f6315",
+        "bytes": 348888890
+      },
+      "R2.fastq": {
+        "sha256": "bc8c5e0d9459015c456fa7b91e7fc157195fe4e632fd028e0e71d38934698f2b",
+        "bytes": 878483030
+      }
+    }
+  },
+  "source_sha256": {
+    "pom.xml": "7b23d588cdd13d87612b195f1b528836f9efaf8397f020640cab4c87aa5ecb7d",
+    "scripts/baseline_demux.py": "1e50e0fd0961bed11f49b10c3cd683b0b4109d94a9b421de15cf592365921f9f",
+    "scripts/benchmark_native.py": "7498032e92e302975ab6bdf219f26a91eb558d1c28151cee6a5e38a9395aacb1",
+    "src/main/java/com/techtune/jseqzero/cli/JSeqZeroMain.java": "3c80bc5009952ba2e5287e2abb4236936ddadcd74c53e0c10e7c87b7912d1a9b",
+    "src/main/java/com/techtune/jseqzero/core/BitapFlankFinder.java": "121915df32838c67ee292b0220a98cc2f82724a3aecce7413b8a7d5dd3ea4b4d",
+    "src/main/java/com/techtune/jseqzero/core/Dna2Bit.java": "01f802c1a4f837beb48acc45405352711eec02d9ee4ca01e0f03131cd3342102",
+    "src/main/java/com/techtune/jseqzero/core/FastqRecordReader.java": "e606eba88856b55f505781c8af358b97e50d4edfbd7e2c6fd27846473055d26e",
+    "src/main/java/com/techtune/jseqzero/core/PigeonholeBarcodeIndex.java": "d652113058bfb35f83d0f882ea2834b25dc20f518d770ea57620bf5fc0107fdb",
+    "src/main/java/com/techtune/jseqzero/tools/AmpliconDemuxTool.java": "cfcfc55bcc24cd2e175f13877478d305c5f70d4e0b6cd3ded77e782b84ebbe8f",
+    "src/main/java/com/techtune/jseqzero/tools/SyntheticFastqGenerator.java": "a76ec9fd625ab941d03dd64201699b282fe5223687ac4ae223dd7f53690b1b7c"
+  },
+  "method": {
+    "repeats": 3,
+    "implementations": [
+      "readable-python",
+      "graalvm-native"
+    ],
+    "timing": "Full fresh-process wall time, including startup and input/output",
+    "memory": "Linux wait4 ru_maxrss in KiB, converted to MiB",
+    "native_heap_limit": "512m",
+    "allocation_profiling": false,
+    "run_order": "Rotated across repetitions",
+    "filesystem_cache": "Not flushed; all inputs read for hashing before measurements",
+    "cpu_affinity": "Only benchmark child processes pinned to one already-allowed CPU; no system settings changed",
+    "scope": "Both implementations authored in this repository; not a language-wide or biotech-lab comparison"
+  },
+  "runs": [
+    {
+      "implementation": "readable-python",
+      "repeat": 1,
+      "wall_seconds": 79.86968581797555,
+      "peak_rss_mib": 287.49609375,
+      "user_cpu_seconds": 79.516724,
+      "system_cpu_seconds": 0.255642,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 991809,
+        "pcr_duplicates": 3820775,
+        "no_flank": 161789,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "bf8afa78fce5bcf82a294c384b615795eabf4133d2906a47604231f76312e34c"
+    },
+    {
+      "implementation": "graalvm-native",
+      "repeat": 1,
+      "wall_seconds": 2.5751985679962672,
+      "peak_rss_mib": 42.0,
+      "user_cpu_seconds": 2.452866,
+      "system_cpu_seconds": 0.117779,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 993032,
+        "pcr_duplicates": 3981341,
+        "no_flank": 0,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "9ecf38ea1cf1cf59d0066b12b8d1cf69815b3403646dec1c3755088481f65e11"
+    },
+    {
+      "implementation": "graalvm-native",
+      "repeat": 2,
+      "wall_seconds": 2.5745781139703467,
+      "peak_rss_mib": 42.0,
+      "user_cpu_seconds": 2.448182,
+      "system_cpu_seconds": 0.121794,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 993032,
+        "pcr_duplicates": 3981341,
+        "no_flank": 0,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "9ecf38ea1cf1cf59d0066b12b8d1cf69815b3403646dec1c3755088481f65e11"
+    },
+    {
+      "implementation": "readable-python",
+      "repeat": 2,
+      "wall_seconds": 78.59535238903482,
+      "peak_rss_mib": 287.5,
+      "user_cpu_seconds": 78.264101,
+      "system_cpu_seconds": 0.24369,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 991809,
+        "pcr_duplicates": 3820775,
+        "no_flank": 161789,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "bf8afa78fce5bcf82a294c384b615795eabf4133d2906a47604231f76312e34c"
+    },
+    {
+      "implementation": "readable-python",
+      "repeat": 3,
+      "wall_seconds": 78.23973013396608,
+      "peak_rss_mib": 287.50390625,
+      "user_cpu_seconds": 77.911313,
+      "system_cpu_seconds": 0.23960599999999999,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 991809,
+        "pcr_duplicates": 3820775,
+        "no_flank": 161789,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "bf8afa78fce5bcf82a294c384b615795eabf4133d2906a47604231f76312e34c"
+    },
+    {
+      "implementation": "graalvm-native",
+      "repeat": 3,
+      "wall_seconds": 2.5891365180141293,
+      "peak_rss_mib": 42.0,
+      "user_cpu_seconds": 2.46171,
+      "system_cpu_seconds": 0.122773,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 993032,
+        "pcr_duplicates": 3981341,
+        "no_flank": 0,
+        "unmatched_barcode": 25627
+      },
+      "output_sha256": "9ecf38ea1cf1cf59d0066b12b8d1cf69815b3403646dec1c3755088481f65e11"
+    }
+  ],
+  "summary": {
+    "readable-python": {
+      "median_wall_seconds": 78.59535238903482,
+      "min_wall_seconds": 78.23973013396608,
+      "max_wall_seconds": 79.86968581797555,
+      "median_peak_rss_mib": 287.5,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 991809,
+        "pcr_duplicates": 3820775,
+        "no_flank": 161789,
+        "unmatched_barcode": 25627
+      }
+    },
+    "graalvm-native": {
+      "median_wall_seconds": 2.5751985679962672,
+      "min_wall_seconds": 2.5745781139703467,
+      "max_wall_seconds": 2.5891365180141293,
+      "median_peak_rss_mib": 42.0,
+      "telemetry": {
+        "read_pairs": 5000000,
+        "unique_umis": 993032,
+        "pcr_duplicates": 3981341,
+        "no_flank": 0,
+        "unmatched_barcode": 25627
+      }
+    }
+  },
+  "output_comparison": {
+    "native_identical_to_python": false,
+    "cell_variant_rows_differing": 1221,
+    "extra_native_counts": 1223,
+    "extra_python_counts": 0,
+    "interpretation": "Different anchor matching; count differences are not a ground-truth accuracy measurement"
+  },
+  "provenance_note": "7 AppleDouble packaging metadata entries (._ files) omitted from source_sha256; application source hashes and measured runs are unchanged."
+}
